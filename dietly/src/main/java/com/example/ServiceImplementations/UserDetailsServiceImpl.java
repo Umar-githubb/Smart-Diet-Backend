@@ -4,15 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.example.Entities.User;
 import com.example.Repositories.UserRepository;
-import com.example.service.UserDetailsService;
+
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService{
-	@Autowired
-	private UserRepository userRepo;
+	private final UserRepository userRepo;
+
+    public UserDetailsServiceImpl(UserRepository userRepo) {
+        this.userRepo = userRepo;
+    }
 	
 	@Override
 	public UserDetails  loadUserByUsername(String userName) throws UsernameNotFoundException{
@@ -22,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 		return org.springframework.security.core.userdetails.User
 				.withUsername(user.getUserName())
 				.password(user.getPassword())
-				.roles(user.getRole())
+				.authorities(user.getRole().name())
 				.build();
 					
 	}

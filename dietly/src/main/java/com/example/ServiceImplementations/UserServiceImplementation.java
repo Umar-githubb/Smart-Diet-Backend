@@ -32,6 +32,10 @@ public class UserServiceImplementation implements UserService{
 				.orElseThrow(()-> new RuntimeException("No user Found with " + userId));
 	};
 	
-	
+	 @Override
+	    public User findByUsername(String username) {
+	        return userRepo.findByUserName(username)
+	                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+	    }
 	
 }

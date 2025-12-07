@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.Entities.Meal;
 
 public interface MealRepository extends JpaRepository<Meal, Long>{
-	List<Meal> findByAssignedToId(Long userId);
+	List<Meal> findByAssignedTo_UserId(Long userId);
+	List<Meal> findByDietician_UserId(Long userId);
 }

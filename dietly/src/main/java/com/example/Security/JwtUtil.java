@@ -1,9 +1,13 @@
 package com.example.Security;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
+
+import com.example.Entities.User;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -22,14 +26,21 @@ public class JwtUtil {
     }
 
     // ⬇️ Generate JWT token
-    public String generateToken(String username) {
+    public String generateToken(User user) {
+  
+    	Map<String, Object> claims = new HashMap<>();
+    	claims.put("role", user.getRole().name());
+    	
+    	
+    	
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getUserName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+  
 
     // ⬇️ Validate token
     public boolean validateToken(String token, String username) {

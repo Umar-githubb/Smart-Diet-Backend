@@ -7,5 +7,5 @@ import com.example.Entities.User;
 
 @Service
 public interface UserDetailsService {
-	UserDetails  loadUserByUsername(String userName);
+	public UserDetails  loadUserByUsername(String userName);
 }

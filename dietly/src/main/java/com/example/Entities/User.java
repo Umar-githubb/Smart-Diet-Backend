@@ -26,10 +26,10 @@ public class User {
     private String password;
 	
     @Enumerated(EnumType.STRING)
-    private String role;   //ADMIN, USER, DIETICIAN
+    private Role role;   //ADMIN, USER, DIETICIAN
 
 	public User(Long userId, @NotBlank(message = "User Name cannot be empty.") String userName,
-			@Email(message = "email must be in xxx.com format.") String email, String role) {
+			@Email(message = "email must be in xxx.com format.") String email, Role role) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -69,11 +69,11 @@ public class User {
 		this.email = email;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

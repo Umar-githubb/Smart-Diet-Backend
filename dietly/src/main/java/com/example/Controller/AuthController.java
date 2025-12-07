@@ -1,60 +1,60 @@
 package com.example.Controller;
 
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.Dto.LoginRequest;
 import com.example.Dto.LoginResponse;
+import com.example.Entities.User;
 import com.example.Security.JwtUtil;
-import com.example.demo.DemoApplication;
-import com.example.service.UserDetailsService;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import com.example.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final DemoApplication demoApplication;
-
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtUtil jwtUtil,
-                          UserDetailsService userDetailsService, DemoApplication demoApplication) {
+                          UserDetailsService userDetailsService,
+                          UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
-        this.demoApplication = demoApplication;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
-        // 1️⃣ Authenticate user (username + password)
-        Authentication auth = authenticationManager.authenticate(
+        // 1️⃣ Authenticate username + password
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        // 2️⃣ If authentication successful, load full user details
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        // 2️⃣ Load UserDetails
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(request.getUsername());
 
-        // 3️⃣ Generate JWT
-        String token = jwtUtil.generateToken(userDetails.getUsername());
+        // 3️⃣ Fetch full User entity (contains ROLE enum)
+        User user = userService.findByUsername(request.getUsername());
 
-        // 4️⃣ Return token
+        // 4️⃣ Generate JWT that includes roles inside
+        String token = jwtUtil.generateToken(user);
+
+        // 5️⃣ Return token
         return ResponseEntity.ok(new LoginResponse(token));
     }
 }
