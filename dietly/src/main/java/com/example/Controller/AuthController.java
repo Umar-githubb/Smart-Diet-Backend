@@ -36,7 +36,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
-        // 1️⃣ Authenticate username + password
+        //  Authenticate username + password
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -44,17 +44,17 @@ public class AuthController {
                 )
         );
 
-        // 2️⃣ Load UserDetails
+        // Load UserDetails
         UserDetails userDetails =
                 userDetailsService.loadUserByUsername(request.getUsername());
 
-        // 3️⃣ Fetch full User entity (contains ROLE enum)
+        //  Fetch full User entity (contains ROLE enum)
         User user = userService.findByUsername(request.getUsername());
 
-        // 4️⃣ Generate JWT that includes roles inside
+        //  Generate JWT that includes roles inside
         String token = jwtUtil.generateToken(user);
 
-        // 5️⃣ Return token
+        //  Return token
         return ResponseEntity.ok(new LoginResponse(token));
     }
 }
